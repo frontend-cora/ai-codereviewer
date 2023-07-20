@@ -251,6 +251,9 @@ function main() {
                 ? yield octokit
                     .request({
                     url: response.data.diff_url,
+                    headers: {
+                        authorization: `token ${inputs.githubToken}}`,
+                    },
                 })
                     .then((res) => res.data)
                 : null;
