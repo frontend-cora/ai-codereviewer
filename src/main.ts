@@ -223,30 +223,19 @@ async function main() {
 
     console.log({ newBaseSha, newHeadSha });
 
-    const response = await octokit.rest.repos.compareCommits({
-      owner: prDetails.owner,
-      repo: prDetails.repo,
-      base: newBaseSha,
-      head: newHeadSha,
-    });
-
-    console.log({ response });
-
-    diff = response.data.diff_url
-      ? await octokit
-          .request({
-            url: `https://api.github.com/repos/${prDetails.owner}/${prDetails.repo}/compare/${newBaseSha}...${newHeadSha}`,
-            owner: prDetails.owner,
-            repo: prDetails.repo,
-            headers: {
-              Accept: "application/vnd.github.diff",
-            },
-          })
-          .then((res) => res.data)
-          .catch((error) => {
-            console.log("Error getting diff:", error);
-          })
-      : null;
+    diff = await octokit
+      .request({
+        url: `https://api.github.com/repos/${prDetails.owner}/${prDetails.repo}/compare/${newBaseSha}...${newHeadSha}`,
+        owner: prDetails.owner,
+        repo: prDetails.repo,
+        headers: {
+          Accept: "application/vnd.github.diff",
+        },
+      })
+      .then((res) => res.data)
+      .catch((error) => {
+        console.log("Error getting diff:", error);
+      });
     console.log({ diff2: diff });
   } else {
     console.log("Unsupported event:", process.env.GITHUB_EVENT_NAME);

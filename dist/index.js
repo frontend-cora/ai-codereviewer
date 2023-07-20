@@ -240,28 +240,19 @@ function main() {
             const newBaseSha = eventData.before;
             const newHeadSha = eventData.after;
             console.log({ newBaseSha, newHeadSha });
-            const response = yield octokit.rest.repos.compareCommits({
+            diff = yield octokit
+                .request({
+                url: `https://api.github.com/repos/${prDetails.owner}/${prDetails.repo}/compare/${newBaseSha}...${newHeadSha}`,
                 owner: prDetails.owner,
                 repo: prDetails.repo,
-                base: newBaseSha,
-                head: newHeadSha,
+                headers: {
+                    Accept: "application/vnd.github.diff",
+                },
+            })
+                .then((res) => res.data)
+                .catch((error) => {
+                console.log("Error getting diff:", error);
             });
-            console.log({ response });
-            diff = response.data.diff_url
-                ? yield octokit
-                    .request({
-                    url: `https://api.github.com/repos/${prDetails.owner}/${prDetails.repo}/compare/${newBaseSha}...${newHeadSha}`,
-                    owner: prDetails.owner,
-                    repo: prDetails.repo,
-                    headers: {
-                        Accept: "application/vnd.github.diff",
-                    },
-                })
-                    .then((res) => res.data)
-                    .catch((error) => {
-                    console.log("Error getting diff:", error);
-                })
-                : null;
             console.log({ diff2: diff });
         }
         else {
