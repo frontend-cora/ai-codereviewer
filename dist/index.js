@@ -232,9 +232,35 @@ function main() {
         let diff;
         const eventData = JSON.parse((0, fs_1.readFileSync)((_a = process.env.GITHUB_EVENT_PATH) !== null && _a !== void 0 ? _a : "", "utf8"));
         console.log({ eventData });
-        if (["opened", "synchronize"].includes(eventData.action)) {
+        if (eventData.action === "opened") {
             diff = yield getDiff(prDetails.owner, prDetails.repo, prDetails.pull_number);
             console.log({ diff });
+        }
+        else if (eventData.action === "synchronize") {
+            const newBaseSha = eventData.before;
+            const newHeadSha = eventData.after;
+            console.log({ newBaseSha, newHeadSha });
+            const response = yield octokit.rest.repos.compareCommits({
+                owner: prDetails.owner,
+                repo: prDetails.repo,
+                base: newBaseSha,
+                head: newHeadSha,
+            });
+            console.log({ response });
+            diff = response.data.diff_url
+                ? yield octokit
+                    .request({
+                    url: response.data.diff_url,
+                    headers: {
+                        authorization: `token ${inputs.githubToken}`,
+                    },
+                })
+                    .then((res) => res.data)
+                    .catch((error) => {
+                    console.log("Error getting diff:", error);
+                })
+                : null;
+            console.log({ diff2: diff });
         }
         else {
             console.log("Unsupported event:", process.env.GITHUB_EVENT_NAME);
