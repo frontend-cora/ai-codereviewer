@@ -228,20 +228,25 @@ function main() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const prDetails = yield getPRDetails();
+        console.log({ prDetails });
         let diff;
         const eventData = JSON.parse((0, fs_1.readFileSync)((_a = process.env.GITHUB_EVENT_PATH) !== null && _a !== void 0 ? _a : "", "utf8"));
+        console.log({ eventData });
         if (eventData.action === "opened") {
             diff = yield getDiff(prDetails.owner, prDetails.repo, prDetails.pull_number);
+            console.log({ diff });
         }
         else if (eventData.action === "synchronize") {
             const newBaseSha = eventData.before;
             const newHeadSha = eventData.after;
+            console.log({ newBaseSha, newHeadSha });
             const response = yield octokit.rest.repos.compareCommits({
                 owner: prDetails.owner,
                 repo: prDetails.repo,
                 base: newBaseSha,
                 head: newHeadSha,
             });
+            console.log({ response });
             diff = response.data.diff_url
                 ? yield octokit
                     .request({
@@ -249,6 +254,7 @@ function main() {
                 })
                     .then((res) => res.data)
                 : null;
+            console.log({ diff2: diff });
         }
         else {
             console.log("Unsupported event:", process.env.GITHUB_EVENT_NAME);
@@ -259,10 +265,13 @@ function main() {
             return;
         }
         const parsedDiff = (0, parse_diff_1.default)(diff);
+        console.log({ parsedDiff });
         const filteredDiff = parsedDiff.filter((file) => {
             return !inputs.exclude.some((pattern) => { var _a; return (0, minimatch_1.default)((_a = file.to) !== null && _a !== void 0 ? _a : "", pattern); });
         });
+        console.log({ filteredDiff });
         const comments = yield analyzeCode(filteredDiff, prDetails);
+        console.log({ comments });
         console.log({ comments, filteredDiff, prDetails });
         if (comments.length > 0) {
             yield createReviewComment(prDetails.owner, prDetails.repo, prDetails.pull_number, [

@@ -201,10 +201,14 @@ async function createReviewComment(
 async function main() {
   const prDetails = await getPRDetails();
 
+  console.log({ prDetails });
+
   let diff: string | null;
   const eventData = JSON.parse(
     readFileSync(process.env.GITHUB_EVENT_PATH ?? "", "utf8")
   );
+
+  console.log({ eventData });
 
   if (eventData.action === "opened") {
     diff = await getDiff(
@@ -212,9 +216,12 @@ async function main() {
       prDetails.repo,
       prDetails.pull_number
     );
+    console.log({ diff });
   } else if (eventData.action === "synchronize") {
     const newBaseSha = eventData.before;
     const newHeadSha = eventData.after;
+
+    console.log({ newBaseSha, newHeadSha });
 
     const response = await octokit.rest.repos.compareCommits({
       owner: prDetails.owner,
@@ -223,6 +230,8 @@ async function main() {
       head: newHeadSha,
     });
 
+    console.log({ response });
+
     diff = response.data.diff_url
       ? await octokit
           .request({
@@ -230,6 +239,7 @@ async function main() {
           })
           .then((res) => res.data)
       : null;
+    console.log({ diff2: diff });
   } else {
     console.log("Unsupported event:", process.env.GITHUB_EVENT_NAME);
     return;
@@ -242,11 +252,17 @@ async function main() {
 
   const parsedDiff = parseDiff(diff);
 
+  console.log({ parsedDiff });
+
   const filteredDiff = parsedDiff.filter((file) => {
     return !inputs.exclude.some((pattern) => minimatch(file.to ?? "", pattern));
   });
 
+  console.log({ filteredDiff });
+
   const comments = await analyzeCode(filteredDiff, prDetails);
+
+  console.log({ comments });
 
   console.log({ comments, filteredDiff, prDetails });
 
