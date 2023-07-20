@@ -237,7 +237,7 @@ async function main() {
           .request({
             url: response.data.diff_url,
             headers: {
-              authorization: `Bearer ${inputs.githubToken}`,
+              Accept: "application/vnd.github.v3.diff",
             },
           })
           .then((res) => res.data)
