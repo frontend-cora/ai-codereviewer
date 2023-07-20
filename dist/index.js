@@ -252,7 +252,7 @@ function main() {
                     .request({
                     url: response.data.diff_url,
                     headers: {
-                        authorization: `token ${inputs.githubToken}`,
+                        authorization: `Bearer ${inputs.githubToken}`,
                     },
                 })
                     .then((res) => res.data)
