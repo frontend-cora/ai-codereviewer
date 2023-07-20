@@ -279,18 +279,7 @@ async function main() {
       prDetails.owner,
       prDetails.repo,
       prDetails.pull_number,
-      [
-        {
-          body: "Consider using a more descriptive name for the GitHub token, such as 'FRONTEND_GITHUB_TOKEN'.",
-          path: ".github/workflows/code_review.yml",
-          line: 19,
-        },
-        {
-          body: "The function `funcaoDeConsole` is being called with the argument 'string aqui 1'. Is there a reason for this change? If not, please revert it back to 'string aqui'.",
-          path: "index2.js",
-          line: 19,
-        },
-      ]
+      comments
     );
   }
 }
