@@ -251,8 +251,10 @@ function main() {
                 ? yield octokit
                     .request({
                     url: response.data.diff_url,
+                    owner: prDetails.owner,
+                    repo: prDetails.repo,
                     headers: {
-                        Accept: "application/vnd.github.v3.diff",
+                        Accept: "application/vnd.github.diff",
                     },
                 })
                     .then((res) => res.data)
