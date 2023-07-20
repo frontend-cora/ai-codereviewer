@@ -1,0 +1,14 @@
+{
+  "extends": [
+    "@corabank/eslint-config"
+  ],
+  "rules": {
+    "max-lines": "off",
+    "react/display-name": "off",
+    "react/no-unstable-nested-components": "off",
+    "no-new-func": "off",
+    "max-nested-callbacks": "off",
+    "react/jsx-no-constructed-context-values": "off",
+    "no-console": "off"
+  }
+}
