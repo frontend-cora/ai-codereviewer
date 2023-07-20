@@ -210,39 +210,13 @@ async function main() {
 
   console.log({ eventData });
 
-  if (eventData.action === "opened") {
+  if (["opened", "synchronize"].includes(eventData.action)) {
     diff = await getDiff(
       prDetails.owner,
       prDetails.repo,
       prDetails.pull_number
     );
     console.log({ diff });
-  } else if (eventData.action === "synchronize") {
-    const newBaseSha = eventData.before;
-    const newHeadSha = eventData.after;
-
-    console.log({ newBaseSha, newHeadSha });
-
-    const response = await octokit.rest.repos.compareCommits({
-      owner: prDetails.owner,
-      repo: prDetails.repo,
-      base: newBaseSha,
-      head: newHeadSha,
-    });
-
-    console.log({ response });
-
-    diff = response.data.diff_url
-      ? await octokit
-          .request({
-            url: response.data.diff_url,
-            headers: {
-              authorization: `token ${inputs.githubToken}}`,
-            },
-          })
-          .then((res) => res.data)
-      : null;
-    console.log({ diff2: diff });
   } else {
     console.log("Unsupported event:", process.env.GITHUB_EVENT_NAME);
     return;
