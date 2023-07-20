@@ -250,7 +250,7 @@ function main() {
             diff = response.data.diff_url
                 ? yield octokit
                     .request({
-                    url: response.data.diff_url,
+                    url: `https://api.github.com/repos/${prDetails.owner}/${prDetails.repo}/compare/${newBaseSha}...${newHeadSha}`,
                     owner: prDetails.owner,
                     repo: prDetails.repo,
                     headers: {
