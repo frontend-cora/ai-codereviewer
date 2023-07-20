@@ -189,6 +189,13 @@ async function createReviewComment(
   pull_number: number,
   comments: Array<{ body: string; path: string; line: number }>
 ): Promise<void> {
+  console.log({
+    owner,
+    repo,
+    pull_number,
+    comments,
+    event: "COMMENT",
+  });
   await octokit.rest.pulls.createReview({
     owner,
     repo,
@@ -260,8 +267,6 @@ async function main() {
   const comments = await analyzeCode(filteredDiff, prDetails);
 
   console.log({ comments });
-
-  console.log({ comments, filteredDiff, prDetails });
 
   if (comments.length > 0) {
     await createReviewComment(

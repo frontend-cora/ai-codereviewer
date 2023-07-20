@@ -215,6 +215,13 @@ function createComment(file, chunk, aiResponses) {
 // eslint-disable-next-line max-params
 function createReviewComment(owner, repo, pull_number, comments) {
     return __awaiter(this, void 0, void 0, function* () {
+        console.log({
+            owner,
+            repo,
+            pull_number,
+            comments,
+            event: "COMMENT",
+        });
         yield octokit.rest.pulls.createReview({
             owner,
             repo,
@@ -271,7 +278,6 @@ function main() {
         console.log({ filteredDiff });
         const comments = yield analyzeCode(filteredDiff, prDetails);
         console.log({ comments });
-        console.log({ comments, filteredDiff, prDetails });
         if (comments.length > 0) {
             yield createReviewComment(prDetails.owner, prDetails.repo, prDetails.pull_number, comments);
         }
