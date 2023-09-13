@@ -11,7 +11,7 @@ export const getInputs = () => {
     .map((s) => s.trim());
 
   return {
-    githubToken,
+    githubTokenTest: githubToken,
     openaiApiKey,
     exclude,
   };

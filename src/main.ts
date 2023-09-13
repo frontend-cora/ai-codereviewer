@@ -10,7 +10,10 @@ import { getInputs } from "./inputs";
 
 const inputs = getInputs();
 
-const octokit = new Octokit({ auth: inputs.githubToken, request: { fetch } });
+const octokit = new Octokit({
+  auth: inputs.githubTokenTest,
+  request: { fetch },
+});
 
 const configuration = new Configuration({
   basePath: "https://api.stage.cora.com.br/openai-proxy/v1",
@@ -36,9 +39,6 @@ async function getPRDetails(): Promise<PRDetails> {
     owner: repository.owner.login,
     repo: repository.name,
     pull_number: number,
-    headers: {
-      authorization: process.env.FRONTEND_GITHUB_TOKEN,
-    },
   });
 
   return {

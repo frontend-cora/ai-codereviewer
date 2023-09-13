@@ -42,7 +42,7 @@ const getInputs = () => {
         .split(",")
         .map((s) => s.trim());
     return {
-        githubToken,
+        githubTokenTest: githubToken,
         openaiApiKey,
         exclude,
     };
@@ -78,7 +78,10 @@ const parse_diff_1 = __importDefault(__nccwpck_require__(4833));
 const rest_1 = __nccwpck_require__(5375);
 const inputs_1 = __nccwpck_require__(6180);
 const inputs = (0, inputs_1.getInputs)();
-const octokit = new rest_1.Octokit({ auth: inputs.githubToken, request: { fetch: node_fetch_1.default } });
+const octokit = new rest_1.Octokit({
+    auth: inputs.githubTokenTest,
+    request: { fetch: node_fetch_1.default },
+});
 const configuration = new openai_1.Configuration({
     basePath: "https://api.stage.cora.com.br/openai-proxy/v1",
 });
@@ -92,9 +95,6 @@ function getPRDetails() {
             owner: repository.owner.login,
             repo: repository.name,
             pull_number: number,
-            headers: {
-                authorization: process.env.FRONTEND_GITHUB_TOKEN,
-            },
         });
         return {
             owner: repository.owner.login,
