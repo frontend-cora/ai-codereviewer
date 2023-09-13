@@ -40,7 +40,7 @@ jobs:
       - name: AI Code Reviewer
         uses: your-username/ai-code-reviewer@main
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.FRONTEND_GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           exclude: "**/*.json, **/*.md" # Optional: exclude patterns separated by commas
 ```

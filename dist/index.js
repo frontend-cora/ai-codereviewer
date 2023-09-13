@@ -92,6 +92,9 @@ function getPRDetails() {
             owner: repository.owner.login,
             repo: repository.name,
             pull_number: number,
+            headers: {
+                authorization: process.env.FRONTEND_GITHUB_TOKEN,
+            },
         });
         return {
             owner: repository.owner.login,
