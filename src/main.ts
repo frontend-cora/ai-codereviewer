@@ -157,6 +157,8 @@ async function getAIResponse(prompt: string): Promise<Array<{
       }
     );
 
+    console.log({ response });
+
     const res = response.data.choices[0].message?.content?.trim() || "[]";
     return JSON.parse(res);
   } catch (error) {
@@ -192,13 +194,6 @@ async function createReviewComment(
   pull_number: number,
   comments: Array<{ body: string; path: string; line: number }>
 ): Promise<void> {
-  console.log({
-    owner,
-    repo,
-    pull_number,
-    comments,
-    event: "COMMENT",
-  });
   await octokit.rest.pulls.createReview({
     owner,
     repo,
@@ -211,14 +206,10 @@ async function createReviewComment(
 async function main() {
   const prDetails = await getPRDetails();
 
-  console.log({ prDetails });
-
   let diff: string | null;
   const eventData = JSON.parse(
     readFileSync(process.env.GITHUB_EVENT_PATH ?? "", "utf8")
   );
-
-  console.log({ eventData });
 
   if (eventData.action === "opened") {
     diff = await getDiff(
@@ -230,8 +221,6 @@ async function main() {
   } else if (eventData.action === "synchronize") {
     const newBaseSha = eventData.before;
     const newHeadSha = eventData.after;
-
-    console.log({ newBaseSha, newHeadSha });
 
     diff = await octokit
       .request({
@@ -246,7 +235,6 @@ async function main() {
       .catch((error) => {
         console.log("Error getting diff:", error);
       });
-    console.log({ diff2: diff });
   } else {
     console.log("Unsupported event:", process.env.GITHUB_EVENT_NAME);
     return;
@@ -259,13 +247,9 @@ async function main() {
 
   const parsedDiff = parseDiff(diff);
 
-  console.log({ parsedDiff });
-
   const filteredDiff = parsedDiff.filter((file) => {
     return !inputs.exclude.some((pattern) => minimatch(file.to ?? "", pattern));
   });
-
-  console.log({ filteredDiff });
 
   const comments = await analyzeCode(filteredDiff, prDetails);
 

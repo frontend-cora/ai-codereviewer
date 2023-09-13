@@ -194,6 +194,7 @@ function getAIResponse(prompt) {
                     "x-email": "frontend@cora.com.br",
                 },
             });
+            console.log({ response });
             const res = ((_b = (_a = response.data.choices[0].message) === null || _a === void 0 ? void 0 : _a.content) === null || _b === void 0 ? void 0 : _b.trim()) || "[]";
             return JSON.parse(res);
         }
@@ -218,13 +219,6 @@ function createComment(file, chunk, aiResponses) {
 // eslint-disable-next-line max-params
 function createReviewComment(owner, repo, pull_number, comments) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log({
-            owner,
-            repo,
-            pull_number,
-            comments,
-            event: "COMMENT",
-        });
         yield octokit.rest.pulls.createReview({
             owner,
             repo,
@@ -238,10 +232,8 @@ function main() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const prDetails = yield getPRDetails();
-        console.log({ prDetails });
         let diff;
         const eventData = JSON.parse((0, fs_1.readFileSync)((_a = process.env.GITHUB_EVENT_PATH) !== null && _a !== void 0 ? _a : "", "utf8"));
-        console.log({ eventData });
         if (eventData.action === "opened") {
             diff = yield getDiff(prDetails.owner, prDetails.repo, prDetails.pull_number);
             console.log({ diff });
@@ -249,7 +241,6 @@ function main() {
         else if (eventData.action === "synchronize") {
             const newBaseSha = eventData.before;
             const newHeadSha = eventData.after;
-            console.log({ newBaseSha, newHeadSha });
             diff = yield octokit
                 .request({
                 url: `https://api.github.com/repos/${prDetails.owner}/${prDetails.repo}/compare/${newBaseSha}...${newHeadSha}`,
@@ -263,7 +254,6 @@ function main() {
                 .catch((error) => {
                 console.log("Error getting diff:", error);
             });
-            console.log({ diff2: diff });
         }
         else {
             console.log("Unsupported event:", process.env.GITHUB_EVENT_NAME);
@@ -274,11 +264,9 @@ function main() {
             return;
         }
         const parsedDiff = (0, parse_diff_1.default)(diff);
-        console.log({ parsedDiff });
         const filteredDiff = parsedDiff.filter((file) => {
             return !inputs.exclude.some((pattern) => { var _a; return (0, minimatch_1.default)((_a = file.to) !== null && _a !== void 0 ? _a : "", pattern); });
         });
-        console.log({ filteredDiff });
         const comments = yield analyzeCode(filteredDiff, prDetails);
         console.log({ comments });
         if (comments.length > 0) {
