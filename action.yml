@@ -5,7 +5,7 @@ inputs:
   github_token:
     description: "GitHub token to interact with the repository."
     required: true
-    default: ${{ secrets.FRONTEND_GITHUB_TOKEN }}
+    token: ${{ secrets.TEST_GITHUB_TOKEN }}
   openai_api_key:
     description: "OpenAI API key for GPT."
     required: true
