@@ -1,11 +1,10 @@
 name: "AI Code Review Action"
 description: "Perform code reviews and comment on diffs using OpenAI API."
-
 inputs:
   github_token:
     description: "GitHub token to interact with the repository."
     required: true
-    token: ${{ secrets.TEST_GITHUB_TOKEN }}
+    default: ${{ github.token }}
   openai_api_key:
     description: "OpenAI API key for GPT."
     required: true
