@@ -11,7 +11,7 @@ import { getInputs } from "./inputs";
 const inputs = getInputs();
 
 const octokit = new Octokit({
-  auth: inputs.githubTokenTest,
+  auth: inputs.githubToken,
   request: { fetch },
 });
 
