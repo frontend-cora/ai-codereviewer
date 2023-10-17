@@ -98,6 +98,7 @@ function createPrompt(file: File, chunk: Chunk, prDetails: PRDetails): string {
 - Consider that will be used Typescript or Javascript code.
 - Make clear performance improvements, better understanding and explain why.
 - Always consider using es6+
+- If you have suggestions, give examples of what to do
 - IMPORTANT: NEVER suggest adding comments or descriptions to the code.
 
 Review the following code diff in the file "${
